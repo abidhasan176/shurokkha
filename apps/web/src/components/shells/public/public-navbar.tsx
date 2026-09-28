@@ -75,7 +75,7 @@ export default function PublicNavbar() {
             href={routes.public?.operations || "/operations"}
             className={cn(
               buttonVariants({ variant: "outline", size: "sm" }),
-              "hidden md:inline-flex border-primary/30 text-primary hover:bg-primary/10"
+              "hidden border-primary/30 text-primary hover:bg-primary/10 md:inline-flex"
             )}
           >
             Admin Panel

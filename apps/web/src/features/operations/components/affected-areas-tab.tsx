@@ -34,7 +34,10 @@ export function AffectedAreasTab() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const parsedDisaster = parseInt(disasterId || String(disasters[0]?.disaster_id || 1), 10)
+    const parsedDisaster = parseInt(
+      disasterId || String(disasters[0]?.disaster_id || 1),
+      10
+    )
     const parsedPopulation = parseInt(population, 10)
     const parsedLocation = locationId ? parseInt(locationId, 10) : undefined
 
@@ -72,16 +75,20 @@ export function AffectedAreasTab() {
     <div className="grid gap-6 lg:grid-cols-12">
       {/* Input Form */}
       <div className="lg:col-span-4">
-        <Card className="border-primary/20 shadow-sm sticky top-24">
+        <Card className="sticky top-24 border-primary/20 shadow-sm">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              <div className="rounded-lg bg-primary/10 p-2 text-primary">
                 <MapPin className="size-5" />
               </div>
               <div>
                 <CardTitle className="text-lg">Add Affected Area</CardTitle>
                 <CardDescription>
-                  Insert record into <code className="text-xs bg-muted px-1 py-0.5 rounded">affected_areas</code> table
+                  Insert record into{" "}
+                  <code className="rounded bg-muted px-1 py-0.5 text-xs">
+                    affected_areas
+                  </code>{" "}
+                  table
                 </CardDescription>
               </div>
             </div>
@@ -120,9 +127,11 @@ export function AffectedAreasTab() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="population">Affected Population (People) *</Label>
+                <Label htmlFor="population">
+                  Affected Population (People) *
+                </Label>
                 <div className="relative">
-                  <Users className="size-4 absolute left-3 top-3 text-muted-foreground" />
+                  <Users className="absolute top-3 left-3 size-4 text-muted-foreground" />
                   <Input
                     id="population"
                     type="number"
@@ -157,7 +166,9 @@ export function AffectedAreasTab() {
                 disabled={affectedAreas.create.isPending}
               >
                 <Plus className="size-4" />
-                {affectedAreas.create.isPending ? "Inserting..." : "Insert Affected Area"}
+                {affectedAreas.create.isPending
+                  ? "Inserting..."
+                  : "Insert Affected Area"}
               </Button>
             </form>
           </CardContent>
@@ -165,11 +176,11 @@ export function AffectedAreasTab() {
       </div>
 
       {/* Live Table */}
-      <div className="lg:col-span-8 space-y-4">
+      <div className="space-y-4 lg:col-span-8">
         <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <div>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <span>Affected Areas Live Table</span>
                 <Badge variant="outline" className="font-mono text-xs">
                   {affectedAreas.data.length} records
@@ -196,25 +207,33 @@ export function AffectedAreasTab() {
                 <TableBody>
                   {affectedAreas.isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                      <TableCell
+                        colSpan={6}
+                        className="py-8 text-center text-muted-foreground"
+                      >
                         Loading affected areas...
                       </TableCell>
                     </TableRow>
                   ) : affectedAreas.data.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                        No affected areas found in database. Add one on the left!
+                      <TableCell
+                        colSpan={6}
+                        className="py-8 text-center text-muted-foreground"
+                      >
+                        No affected areas found in database. Add one on the
+                        left!
                       </TableCell>
                     </TableRow>
                   ) : (
                     affectedAreas.data.map((row) => (
                       <TableRow key={row.area_id} className="hover:bg-muted/30">
-                        <TableCell className="font-mono font-medium text-xs">
+                        <TableCell className="font-mono text-xs font-medium">
                           #{row.area_id}
                         </TableCell>
                         <TableCell>
-                          <div className="font-medium text-sm">
-                            {row.disaster_name || `Disaster #${row.disaster_id}`}
+                          <div className="text-sm font-medium">
+                            {row.disaster_name ||
+                              `Disaster #${row.disaster_id}`}
                           </div>
                           <span className="text-xs text-muted-foreground">
                             ID: {row.disaster_id}
@@ -227,7 +246,10 @@ export function AffectedAreasTab() {
                           {Number(row.affected_population).toLocaleString()}
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className={getSeverityBadgeClass(row.severity)}>
+                          <Badge
+                            variant="outline"
+                            className={getSeverityBadgeClass(row.severity)}
+                          >
                             {row.severity}
                           </Badge>
                         </TableCell>
@@ -236,7 +258,9 @@ export function AffectedAreasTab() {
                             variant="ghost"
                             size="icon-sm"
                             className="text-destructive hover:bg-destructive/10"
-                            onClick={() => affectedAreas.remove.mutate(row.area_id)}
+                            onClick={() =>
+                              affectedAreas.remove.mutate(row.area_id)
+                            }
                             disabled={affectedAreas.remove.isPending}
                             title="Delete Row"
                           >

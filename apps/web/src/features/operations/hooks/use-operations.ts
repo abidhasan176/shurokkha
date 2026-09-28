@@ -216,7 +216,9 @@ export function useOperationsData() {
   const emergencyRequestsQuery = useQuery({
     queryKey: ["admin", "emergency-requests-list"],
     queryFn: async () => {
-      const res = await fetch("http://127.0.0.1:8000/api/v1/admin/emergency-requests")
+      const res = await fetch(
+        "http://127.0.0.1:8000/api/v1/admin/emergency-requests"
+      )
       const json = await res.json()
       return (json.data ?? []) as EmergencyRequestAdminRecord[]
     },

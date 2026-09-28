@@ -29,7 +29,9 @@ export function RescueTeamsTab() {
 
   const [teamName, setTeamName] = useState<string>("")
   const [teamType, setTeamType] = useState<string>("Search and Rescue")
-  const [availability, setAvailability] = useState<"available" | "busy" | "offline">("available")
+  const [availability, setAvailability] = useState<
+    "available" | "busy" | "offline"
+  >("available")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,13 +55,13 @@ export function RescueTeamsTab() {
     switch (status?.toLowerCase()) {
       case "available":
         return (
-          <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30">
+          <Badge className="border-emerald-500/30 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
             ● Available
           </Badge>
         )
       case "busy":
         return (
-          <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30">
+          <Badge className="border-amber-500/30 bg-amber-500/15 text-amber-700 dark:text-amber-400">
             ● Busy on Mission
           </Badge>
         )
@@ -77,16 +79,20 @@ export function RescueTeamsTab() {
     <div className="grid gap-6 lg:grid-cols-12">
       {/* Input Form */}
       <div className="lg:col-span-4">
-        <Card className="border-primary/20 shadow-sm sticky top-24">
+        <Card className="sticky top-24 border-primary/20 shadow-sm">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              <div className="rounded-lg bg-primary/10 p-2 text-primary">
                 <ShieldCheck className="size-5" />
               </div>
               <div>
                 <CardTitle className="text-lg">Register Rescue Team</CardTitle>
                 <CardDescription>
-                  Insert record into <code className="text-xs bg-muted px-1 py-0.5 rounded">rescue_teams</code> table
+                  Insert record into{" "}
+                  <code className="rounded bg-muted px-1 py-0.5 text-xs">
+                    rescue_teams
+                  </code>{" "}
+                  table
                 </CardDescription>
               </div>
             </div>
@@ -117,7 +123,9 @@ export function RescueTeamsTab() {
                   <option value="Medical Support">Medical Support</option>
                   <option value="Logistics & Relief">Logistics & Relief</option>
                   <option value="Fire & Rescue">Fire & Rescue</option>
-                  <option value="Helicopter Evacuation">Helicopter Evacuation</option>
+                  <option value="Helicopter Evacuation">
+                    Helicopter Evacuation
+                  </option>
                 </NativeSelect>
               </div>
 
@@ -127,11 +135,15 @@ export function RescueTeamsTab() {
                   id="availability"
                   value={availability}
                   onChange={(e) =>
-                    setAvailability(e.target.value as "available" | "busy" | "offline")
+                    setAvailability(
+                      e.target.value as "available" | "busy" | "offline"
+                    )
                   }
                   className="w-full"
                 >
-                  <option value="available">Available (Ready for assignment)</option>
+                  <option value="available">
+                    Available (Ready for assignment)
+                  </option>
                   <option value="busy">Busy (Currently on field)</option>
                   <option value="offline">Offline (Off duty / standby)</option>
                 </NativeSelect>
@@ -143,7 +155,9 @@ export function RescueTeamsTab() {
                 disabled={rescueTeams.create.isPending}
               >
                 <Plus className="size-4" />
-                {rescueTeams.create.isPending ? "Registering..." : "Add Rescue Team"}
+                {rescueTeams.create.isPending
+                  ? "Registering..."
+                  : "Add Rescue Team"}
               </Button>
             </form>
           </CardContent>
@@ -151,11 +165,11 @@ export function RescueTeamsTab() {
       </div>
 
       {/* Live Table */}
-      <div className="lg:col-span-8 space-y-4">
+      <div className="space-y-4 lg:col-span-8">
         <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <div>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <span>Rescue Teams List</span>
                 <Badge variant="outline" className="font-mono text-xs">
                   {rescueTeams.data.length} teams
@@ -182,23 +196,29 @@ export function RescueTeamsTab() {
                 <TableBody>
                   {rescueTeams.isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                      <TableCell
+                        colSpan={6}
+                        className="py-8 text-center text-muted-foreground"
+                      >
                         Loading rescue teams...
                       </TableCell>
                     </TableRow>
                   ) : rescueTeams.data.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                      <TableCell
+                        colSpan={6}
+                        className="py-8 text-center text-muted-foreground"
+                      >
                         No rescue teams found. Add your first team on the left!
                       </TableCell>
                     </TableRow>
                   ) : (
                     rescueTeams.data.map((row) => (
                       <TableRow key={row.team_id} className="hover:bg-muted/30">
-                        <TableCell className="font-mono font-medium text-xs">
+                        <TableCell className="font-mono text-xs font-medium">
                           #{row.team_id}
                         </TableCell>
-                        <TableCell className="font-medium text-sm">
+                        <TableCell className="text-sm font-medium">
                           {row.team_name}
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
@@ -208,14 +228,19 @@ export function RescueTeamsTab() {
                           {getAvailabilityBadge(row.availability)}
                         </TableCell>
                         <TableCell className="font-mono text-xs">
-                          <span className="font-medium">{row.total_assignments ?? 0}</span> missions
+                          <span className="font-medium">
+                            {row.total_assignments ?? 0}
+                          </span>{" "}
+                          missions
                         </TableCell>
                         <TableCell className="text-right">
                           <Button
                             variant="ghost"
                             size="icon-sm"
                             className="text-destructive hover:bg-destructive/10"
-                            onClick={() => rescueTeams.remove.mutate(row.team_id)}
+                            onClick={() =>
+                              rescueTeams.remove.mutate(row.team_id)
+                            }
                             disabled={rescueTeams.remove.isPending}
                             title="Delete Team"
                           >
