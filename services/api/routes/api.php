@@ -199,6 +199,13 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
                 Route::get('/facility-locations', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'facilityLocations'])->name('facility-locations');
             });
         });
+
+        // TVUP Core Operations (Moved outside auth for easy frontend demo)
+        Route::prefix('core')->name('core.')->group(function (): void {
+            Route::get('/view', [\App\Http\Controllers\Api\V1\Admin\TVUPDisasterEmergencyController::class, 'getUserEmergencyHistory']);
+            Route::get('/union', [\App\Http\Controllers\Api\V1\Admin\TVUPDisasterEmergencyController::class, 'getCriticalAlerts']);
+            Route::post('/procedure', [\App\Http\Controllers\Api\V1\Admin\TVUPDisasterEmergencyController::class, 'escalateDisaster']);
+            Route::post('/transaction', [\App\Http\Controllers\Api\V1\Admin\TVUPDisasterEmergencyController::class, 'reportDisasterAndEmergency']);
+        });
     });
-});
 
