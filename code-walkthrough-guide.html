@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Code Walkthrough Guide</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 14mm 12mm;
+      }
+      body {
+        font-family:
+          "Hind Siliguri", "Nirmala UI", "Vrinda", "Segoe UI", sans-serif;
+        color: #1f2937;
+        line-height: 1.65;
+        font-size: 11pt;
+        max-width: 100%;
+      }
+      h1 {
+        font-size: 20pt;
+        color: #0f4c81;
+        border-bottom: 3px solid #0f4c81;
+        padding-bottom: 6px;
+      }
+      h2 {
+        font-size: 15pt;
+        color: #0f4c81;
+        border-bottom: 1px solid #cbd5e1;
+        padding-bottom: 4px;
+        margin-top: 22px;
+      }
+      h3 {
+        font-size: 12.5pt;
+        color: #14532d;
+        margin-top: 16px;
+      }
+      h4 {
+        font-size: 11.5pt;
+      }
+      blockquote {
+        border-left: 4px solid #f59e0b;
+        background: #fffbeb;
+        margin: 10px 0;
+        padding: 8px 12px;
+        border-radius: 0 6px 6px 0;
+      }
+      blockquote p {
+        margin: 4px 0;
+      }
+      code {
+        font-family: "Consolas", "Courier New", monospace;
+        font-size: 9.5pt;
+        background: #f1f5f9;
+        padding: 1px 4px;
+        border-radius: 3px;
+      }
+      pre {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 10px 12px;
+        border-radius: 6px;
+        overflow-x: auto;
+        font-size: 9pt;
+        line-height: 1.5;
+        page-break-inside: avoid;
+      }
+      pre code {
+        background: none;
+        color: inherit;
+        padding: 0;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 10px 0;
+        font-size: 10pt;
+        page-break-inside: avoid;
+      }
+      th,
+      td {
+        border: 1px solid #cbd5e1;
+        padding: 5px 8px;
+        text-align: left;
+      }
+      th {
+        background: #e0f2fe;
+        color: #0c4a6e;
+      }
+      tr:nth-child(even) td {
+        background: #f8fafc;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid #e2e8f0;
+        margin: 18px 0;
+      }
+      a {
+        color: #0f4c81;
+        text-decoration: none;
+      }
+      h2,
+      h3 {
+        page-break-after: avoid;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>
+      🔍 কোড ওয়াকথ্রু গাইড — &quot;স্যার, কোথায় কানেক্ট হয়েছে, দেখাই&quot;
+    </h1>
+    <blockquote>
+      <p>
+        স্যার যদি বলেন —
+        <em
+          >&quot;দেখান, আপনার কোডে ফ্রন্টএন্ড থেকে ব্যাকএন্ডে কানেকশন
+          কোথায়?&quot;</em
+        >
+        — এই গাইড পড়ে আপনি হুবহু ফাইল ও লাইন নম্বর দেখিয়ে ব্যাখ্যা করতে
+        পারবেন। নিয়ম আগের মতো: টেকনিক্যাল টার্ম ইংরেজিতে, ব্যাখ্যা সহজ বাংলায়।
+      </p>
+    </blockquote>
+    <hr />
+    <h2>১. VS Code-এ প্রজেক্ট খুললে আমার কোড কোথায় পাবেন</h2>
+    <p>
+      স্যার প্রজেক্ট ফোল্ডার খুললে <strong>Explorer</strong> প্যানেলে এই
+      পাথগুলোতে আমার কাজ আছে:
+    </p>
+    <pre><code>shurokkha/
+├── apps/admin/src/components/app/
+│   └── operations-workspace.tsx      ← ফ্রন্টএন্ড UI (ট্যাব, ফর্ম, টেবিল, হ্যান্ডলার)
+├── apps/admin/src/lib/
+│   └── api.ts                        ← ব্যাকএন্ডের ঠিকানা (base URL) ঠিক করা
+├── packages/contracts/src/
+│   └── index.ts                      ← TypeScript টাইপ (ডাটার কাঠামোর চুক্তি)
+├── packages/api-client/src/
+│   └── index.ts                      ← API কল করার SDK (fetch র‍্যাপার)
+├── services/api/
+│   ├── routes/api.php                ← কোন URL কোন কন্ট্রোলারে যাবে
+│   ├── app/Http/Controllers/Api/V1/Admin/
+│   │   ├── ShelterController.php     ← শেল্টারের রিকোয়েস্ট হ্যান্ডলার
+│   │   ├── WarehouseController.php   ← গুদামের রিকোয়েস্ট হ্যান্ডলার
+│   │   └── DonationController.php    ← দানের রিকোয়েস্ট হ্যান্ডলার
+│   └── app/Models/
+│       ├── Shelter.php               ← shelters টেবিলের মডেল
+│       ├── Warehouse.php             ← warehouses টেবিলের মডেল
+│       └── Donation.php              ← donations টেবিলের মডেল
+└── database/
+    ├── migrations/08_create_shelters_table.sql
+    ├── migrations/09_create_warehouses_table.sql
+    ├── migrations/10_create_donations_table.sql
+    ├── admin_shelter_capacity_report.sql   ← JOIN/সাবক্যোয়ারি ডেমো
+    └── seed_relief_operations.sql          ← সিড ডাটা
+</code></pre>
+    <blockquote>
+      <p>💡 <strong>VS Code টিপস (স্যারকে দেখানোর সময়):</strong></p>
+      <ul>
+        <li><code>Ctrl + P</code> চেপে ফাইলের নাম লিখলে সরাসরি ফাইল খোলে।</li>
+        <li>
+          <code>Ctrl + G</code> চেপে লাইন নম্বর লিখলে সরাসরি সেই লাইনে যায়।
+        </li>
+        <li>
+          এই গাইডের প্রতিটি রেফারেন্স <code>ফাইল:লাইন</code> আকারে দেওয়া — যেমন
+          <code>operations-workspace.tsx:188</code>।
+        </li>
+      </ul>
+    </blockquote>
+    <hr />
+    <h2>২. ডাটা ফ্লো #১ — লিস্ট দেখানো (READ)</h2>
+    <p>
+      <strong>দৃশ্য:</strong> পেজ খোলার সাথে সাথে Shelters ট্যাবে ডাটাবেজের ১০টি
+      শেল্টার দেখা যায়। ডাটা কোন পথে এলো?
+    </p>
+    <h3>
+      ধাপ ১ — পেজ লোড হলে ফেচ শুরু (<code>operations-workspace.tsx:360</code>)
+    </h3>
+    <pre><code class="language-tsx">360:    fetchBackendData()
+361:  }, [fetchBackendData])
+</code></pre>
+    <p>
+      → কম্পোনেন্ট মাউন্ট হওয়ার সাথে সাথে (ইউজার পেজ খুললেই)
+      <code>fetchBackendData</code> ফাংশনটি চলে। এটি
+      <code>React.useEffect</code>-এর ভেতরে, তাই একবারই স্বয়ংক্রিয়ভাবে চলে।
+    </p>
+    <h3>
+      ধাপ ২ — <code>api</code> অবজেক্ট তৈরি
+      (<code>operations-workspace.tsx:171</code>)
+    </h3>
+    <pre><code class="language-tsx">171:  const api = React.useMemo(() =&gt; getShurokkhaApi(), [])
+</code></pre>
+    <p>
+      → <code>getShurokkhaApi</code> আসে
+      <code>apps/admin/src/lib/api.ts:44</code> থেকে। ওখানেই ব্যাকএন্ডের ঠিকানা
+      নির্ধারণ হয়:
+    </p>
+    <pre><code class="language-ts">// apps/admin/src/lib/api.ts
+3:  const DEFAULT_API_ORIGIN = &quot;http://localhost:8000&quot;     // ব্যাকএন্ড কোথায় চলে
+44: export function getShurokkhaApi() {
+46:     baseUrl: getApiBaseUrl(),                          // ওই ঠিকানা ব্যবহার হয়
+</code></pre>
+    <blockquote>
+      <p>
+        🗣️ <strong>স্যারকে বলুন:</strong>
+        <em
+          >&quot;স্যার, ফ্রন্টএন্ড <code>lib/api.ts</code>-এর ৩ নম্বর লাইন থেকে
+          ব্যাকএন্ডের base URL নেয় — <code>http://localhost:8000</code>। এটাই
+          কানেকশনের শুরু।&quot;</em
+        >
+      </p>
+    </blockquote>
+    <h3>
+      ধাপ ৩ — সাতটি API কল একসাথে
+      (<code>operations-workspace.tsx:183-191</code>)
+    </h3>
+    <pre><code class="language-tsx">183:      ] = await Promise.all([
+188:        api.admin.shelters.list(),        // ← আমার যোগ করা কল
+189:        api.admin.warehouses.list(),      // ← আমার যোগ করা কল
+190:        api.admin.donations.list(),       // ← আমার যোগ করা কল
+191:      ])
+</code></pre>
+    <p>
+      → <code>Promise.all</code> দিয়ে একসাথে সাতটি রিকোয়েস্ট পাঠানো হয় —
+      দ্রুততার জন্য। এর মধ্যে ১৮৮-১৯০ আমার তিন মডিউলের কল।
+    </p>
+    <h3>
+      ধাপ ৪ — SDK আসল HTTP রিকোয়েস্ট বানায়
+      (<code>packages/api-client/src/index.ts:497-502</code>)
+    </h3>
+    <pre><code class="language-ts">497:      shelters: {
+499:          client.get&lt;ApiResource&lt;ShelterRecord[]&gt;&gt;(&quot;/v1/admin/shelters&quot;),
+501:          client.post&lt;ApiResource&lt;ShelterRecord&gt;&gt;(&quot;/v1/admin/shelters&quot;, input),
+502:        remove: (id: number) =&gt; client.delete&lt;void&gt;(`/v1/admin/shelters/${id}`),
+</code></pre>
+    <p>
+      → <code>list()</code> মানে
+      <code>client.get(&quot;/v1/admin/shelters&quot;)</code> — অর্থাৎ পুরো URL
+      হয় <code>http://localhost:8000/api/v1/admin/shelters</code>।
+    </p>
+    <p><strong>কানেকশনের দুটি গুরুত্বপূর্ণ লাইন:</strong></p>
+    <pre><code class="language-ts">87:    this.credentials = options.credentials ?? &quot;include&quot;   // কুকি পাঠানো হয়
+212:      if (xsrfToken &amp;&amp; !headers[&quot;X-XSRF-TOKEN&quot;]) {
+213:        headers[&quot;X-XSRF-TOKEN&quot;] = xsrfToken               // CSRF নিরাপত্তা টোকেন
+</code></pre>
+    <p>
+      → <code>credentials: &quot;include&quot;</code> মানে ব্রাউজারের কুকি
+      (সেশন) রিকোয়েস্টের সাথে যায়; আর <code>X-XSRF-TOKEN</code> হেডার দিয়ে
+      লারাভেল যাচাই করে রিকোয়েস্টটি আসল ব্রাউজার থেকে এসেছে।
+    </p>
+    <h3>
+      ধাপ ৫ — রুট ঠিক করে দেয় কোন কন্ট্রোলার
+      (<code>services/api/routes/api.php:63</code>)
+    </h3>
+    <pre><code class="language-php">63: Route::get(&#39;/shelters&#39;, [ShelterController::class, &#39;index&#39;])-&gt;name(&#39;shelters.index&#39;);
+</code></pre>
+    <p>
+      → GET <code>/api/v1/admin/shelters</code> এলে লারাভেল
+      <code>ShelterController</code>-এর <code>index</code> মেথড চালাবে।
+      <strong>এটাই ফ্রন্টএন্ড → ব্যাকএন্ড কানেকশনের সেতু।</strong>
+    </p>
+    <h3>
+      ধাপ ৬ — কন্ট্রোলার ডাটাবেজ থেকে পড়ে
+      (<code>ShelterController.php:12-15</code>)
+    </h3>
+    <pre><code class="language-php">12:    public function index(): JsonResponse
+14:        $shelters = Shelter::latest()-&gt;get();     // Eloquent → SQL ক্যোয়ারি
+15:        return response()-&gt;json([&#39;data&#39; =&gt; $shelters]);
+</code></pre>
+    <p>
+      → <code>Shelter::latest()-&gt;get()</code> লারাভেল নিজে SQL বানায়:
+      <code>SELECT * FROM shelters ORDER BY created_at DESC</code> — এবং
+      <strong>MySQL-এর <code>shelters</code> টেবিল</strong> থেকে ডাটা আনে।
+    </p>
+    <h3>
+      ধাপ ৭ — ডাটা ফ্রন্টএন্ডে ফিরে টেবিলে বসে
+      (<code>operations-workspace.tsx:206</code>)
+    </h3>
+    <pre><code class="language-tsx">206:      setShelters(sheltersRes.data)     // React state-এ ডাটা
+209:      setIsOffline(false)               // মানে: ব্যাকএন্ডের সাথে কানেক্টেড!
+</code></pre>
+    <p>
+      → এরপর <code>shelters.map(...)</code> দিয়ে প্রতিটি রো HTML টেবিলের সারি
+      হয়।
+    </p>
+    <blockquote>
+      <p>
+        🗣️ <strong>পুরো READ ফ্লো এক নিঃশ্বাসে:</strong>
+        <em
+          >&quot;স্যার, পেজ খুললে ৩৬ লাইনে <code>fetchBackendData</code> চলে →
+          ১৮ লাইনে <code>shelters.list()</code> কল হয় → api-client-এর ৪৯৯ লাইনে
+          GET রিকোয়েস্ট বানে → <code>api.php</code>-র ৬৩ লাইনের রুট ধরে
+          <code>ShelterController</code>-এর <code>index</code>-এ যায় → ১৪ লাইনে
+          Eloquent দিয়ে MySQL-এর <code>shelters</code> টেবিল থেকে পড়ে → JSON
+          হয়ে ফিরে ২০৬ লাইনে state-এ বসে → টেবিলে দেখা যায়।&quot;</em
+        >
+      </p>
+    </blockquote>
+    <hr />
+    <h2>৩. ডাটা ফ্লো #২ — ফর্ম সাবমিট (WRITE)</h2>
+    <p>
+      <strong>দৃশ্য:</strong> &quot;Register Shelter&quot; ফর্মে নাম, capacity,
+      occupancy, area দিয়ে Save চাপলে ডাটাবেজে নতুন রো যুক্ত হয়।
+    </p>
+    <h3>
+      ধাপ ১ — সাবমিট হ্যান্ডলার (<code>operations-workspace.tsx:574-586</code>)
+    </h3>
+    <pre><code class="language-tsx">575:    if (!shelterForm.shelter_name || !shelterForm.capacity) {  // ফ্রন্টএন্ড যাচাই
+580:    const payload = {
+581:      shelter_name: shelterForm.shelter_name,
+582:      area_id: Number(shelterForm.area_id),
+583:      capacity: Number(shelterForm.capacity),
+584:      occupancy: Number(shelterForm.occupancy || 0),
+585:      status: shelterForm.status,
+586:    }
+</code></pre>
+    <p>
+      → লক্ষ্য করুন:
+      <strong>payload-এর কি-গুলো হুবহু ডাটাবেজের কলামের নাম</strong>
+      (<code>shelter_name</code>, <code>area_id</code>, <code>capacity</code>,
+      <code>occupancy</code>, <code>status</code>)। এটাই ফ্রন্টএন্ড-ডাটাবেজ
+      মিলের প্রথম প্রমাণ।
+    </p>
+    <h3>ধাপ ২ — POST কল (<code>operations-workspace.tsx:590-592</code>)</h3>
+    <pre><code class="language-tsx">590:        const res = await api.admin.shelters.create(payload)   // POST পাঠায়
+591:        setShelters([res.data, ...shelters])                   // নতুন রো তালিকায়
+592:        toast.success(`Shelter saved to backend (ID: ${res.data.shelter_id})`)
+</code></pre>
+    <h3>
+      ধাপ ৩ — SDK → HTTP POST
+      (<code>packages/api-client/src/index.ts:501</code>)
+    </h3>
+    <pre><code class="language-ts">501:          client.post&lt;ApiResource&lt;ShelterRecord&gt;&gt;(&quot;/v1/admin/shelters&quot;, input),
+</code></pre>
+    <h3>ধাপ ৪ — রুট (<code>services/api/routes/api.php:64</code>)</h3>
+    <pre><code class="language-php">64: Route::post(&#39;/shelters&#39;, [ShelterController::class, &#39;store&#39;])-&gt;name(&#39;shelters.store&#39;);
+</code></pre>
+    <h3>
+      ধাপ ৫ — কন্ট্রোলারে ভ্যালিডেশন + INSERT
+      (<code>ShelterController.php:20-29</code>)
+    </h3>
+    <pre><code class="language-php">20:        $validated = $request-&gt;validate([
+21:            &#39;shelter_name&#39; =&gt; &#39;required|string|max:150&#39;,
+22:            &#39;capacity&#39; =&gt; &#39;required|integer|min:0&#39;,
+23:            &#39;occupancy&#39; =&gt; &#39;required|integer|min:0&#39;,
+24:            &#39;area_id&#39; =&gt; &#39;nullable|integer&#39;,
+25:            &#39;status&#39; =&gt; &#39;sometimes|string|max:50&#39;,
+26:        ]);
+28:        $shelter = Shelter::create($validated);   // INSERT INTO shelters (...)
+29:        return response()-&gt;json([&#39;data&#39; =&gt; $shelter], 201);
+</code></pre>
+    <p>
+      → <code>Shelter::create()</code> লারাভেল SQL বানায়:
+      <code
+        >INSERT INTO shelters (shelter_name, capacity, occupancy, area_id,
+        status) VALUES (...)</code
+      >
+      — ডাটা <strong>MySQL-এ স্থায়ীভাবে</strong> জমা হয়।
+      <code>201</code> স্ট্যাটাস মানে &quot;তৈরি হয়েছে&quot;।
+    </p>
+    <blockquote>
+      <p>
+        🗣️ <strong>WRITE ফ্লো এক নিঃশ্বাসে:</strong>
+        <em
+          >&quot;স্যার, ৫৮০ লাইনে payload বানে যেখানে কি-গুলো ডাটাবেজের কলামের
+          নামের হুবহু সমান → ৫৯০ লাইনে POST → api-client ৫০১ → রুট ৬৪ →
+          <code>store</code> মেথডে ২০-২৬ লাইনে ভ্যালিডেশন → ২৮ লাইনে
+          <code>create</code> মানে INSERT → ২০১ রেসপন্স → ৫৯১ লাইনে নতুন রো
+          তালিকায়।&quot;</em
+        >
+      </p>
+    </blockquote>
+    <h3>DELETE ফ্লো (এক লাইনে)</h3>
+    <p>
+      <code>operations-workspace.tsx:620</code> (<code>remove</code>) →
+      <code>api-client:502</code> (DELETE) → <code>api.php:65</code> →
+      <code>ShelterController.php:32-35</code> (<code>destroy</code>) →
+      <code>DELETE FROM shelters WHERE shelter_id = ?</code> →
+      <code>204</code> রেসপন্স।
+    </p>
+    <hr />
+    <h2>৪. ফ্রন্টএন্ড কোথায় ডাটাবেজের সাথে মিলেছে? (ম্যাপিং টেবিল)</h2>
+    <p>
+      স্যার জিজ্ঞেস করলে —
+      <em>&quot;ফ্রন্টএন্ডের কোড আর ডাটাবেজের কলাম মিলবে কীভাবে?&quot;</em> — এই
+      টেবিল দেখান:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>ফর্ম ফিল্ড (UI)</th>
+          <th>payload কি (<code>:580-586</code>)</th>
+          <th>ব্যাকএন্ড ভ্যালিডেশন (<code>:20-26</code>)</th>
+          <th>DB কলাম (<code>08_...sql</code>)</th>
+          <th>TS টাইপ (<code>contracts:203-213</code>)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Shelter Name</td>
+          <td><code>shelter_name</code></td>
+          <td><code>required|string|max:150</code></td>
+          <td><code>shelter_name VARCHAR(150)</code></td>
+          <td><code>shelter_name: string</code></td>
+        </tr>
+        <tr>
+          <td>Affected Area</td>
+          <td><code>area_id</code></td>
+          <td><code>nullable|integer</code></td>
+          <td><code>area_id INT (FK)</code></td>
+          <td><code>area_id: number | null</code></td>
+        </tr>
+        <tr>
+          <td>Capacity</td>
+          <td><code>capacity</code></td>
+          <td><code>required|integer|min:0</code></td>
+          <td><code>capacity INT UNSIGNED</code></td>
+          <td><code>capacity: number</code></td>
+        </tr>
+        <tr>
+          <td>Occupancy</td>
+          <td><code>occupancy</code></td>
+          <td><code>required|integer|min:0</code></td>
+          <td><code>occupancy INT UNSIGNED</code></td>
+          <td><code>occupancy: number</code></td>
+        </tr>
+        <tr>
+          <td>Status</td>
+          <td><code>status</code></td>
+          <td><code>sometimes|string|max:50</code></td>
+          <td><code>status VARCHAR(50)</code></td>
+          <td>
+            <code
+              >status:
+              &quot;open&quot;|&quot;full&quot;|&quot;closed&quot;</code
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><strong>মিলের চারটি স্তর (স্যারকে বোঝান):</strong></p>
+    <ol>
+      <li>
+        <strong>নামের মিল:</strong> payload-এর কি = ডাটাবেজের কলামের নাম
+        (হুবহু)।
+      </li>
+      <li>
+        <strong>টাইপের মিল:</strong> <code>contracts</code>-এর TypeScript
+        ইন্টারফেস (<code>ShelterRecord</code>, <code>contracts:203</code>)
+        ডাটাবেজের কলামের টাইপের প্রতিচ্ছবি — <code>number</code> ↔
+        <code>INT</code>, <code>string</code> ↔ <code>VARCHAR</code>।
+      </li>
+      <li>
+        <strong>নিয়মের মিল:</strong> ভ্যালিডেশন রুল ডাটাবেজের সীমার সমান — যেমন
+        <code>max:150</code> কারণ কলাম <code>VARCHAR(150)</code>;
+        <code>min:0</code> কারণ <code>INT UNSIGNED</code>।
+      </li>
+      <li>
+        <strong>সম্পর্কের মিল:</strong> <code>area_id</code> ফরেন-কি —
+        মাইগ্রেশনের ১৯ লাইনে (<code>08_create_shelters_table.sql:19</code>)
+        <code>fk_shelters_area</code> কনস্ট্রেইন্ট, আর মডেলে
+        <code>belongsTo</code> (<code>Shelter.php:23-26</code>)।
+      </li>
+    </ol>
+    <blockquote>
+      <p>
+        🗣️ <strong>উত্তর:</strong>
+        <em
+          >&quot;স্যার, মিলটা চার স্তরে রাখা: নাম এক, টাইপ এক, সীমা এক, আর
+          সম্পর্ক এক। তাই ফ্রন্টএন্ড থেকে যা আসে, ডাটাবেজ হুবহু তা-ই নেয় — কোনো
+          মিসম্যাচ হয় না।&quot;</em
+        >
+      </p>
+    </blockquote>
+    <hr />
+    <h2>৫. স্যারকে VS Code-এ লাইভ দেখানোর স্ক্রিপ্ট</h2>
+    <p>স্যারকে বলুন: <em>&quot;স্যার, আমি ধাপে ধাপে দেখাচ্ছি —&quot;</em></p>
+    <ol>
+      <li>
+        <strong
+          ><code>Ctrl+P</code> → <code>operations-workspace.tsx</code> →
+          <code>Ctrl+G</code> → <code>171</code></strong
+        >
+        →
+        <em
+          >&quot;এখানে <code>api</code> অবজেক্ট — এটাই ফ্রন্টএন্ডের
+          দরজা।&quot;</em
+        >
+      </li>
+      <li>
+        <strong><code>Ctrl+G</code> → <code>188</code></strong> →
+        <em
+          >&quot;এই তিন লাইন আমার যোগ করা API কল — শেল্টার, গুদাম,
+          দান।&quot;</em
+        >
+      </li>
+      <li>
+        <strong
+          ><code>Ctrl+P</code> → <code>api-client/src/index.ts</code> →
+          <code>Ctrl+G</code> → <code>499</code></strong
+        >
+        →
+        <em
+          >&quot;এখানে কলটা আসল HTTP রিকোয়েস্টে বদলায় — GET
+          <code>/v1/admin/shelters</code>।&quot;</em
+        >
+      </li>
+      <li>
+        <strong
+          ><code>Ctrl+P</code> → <code>api.php</code> → <code>Ctrl+G</code> →
+          <code>63</code></strong
+        >
+        →
+        <em
+          >&quot;ব্যাকএন্ডে এই রুট রিকোয়েস্ট ধরে কন্ট্রোলারে পাঠায় — এটাই
+          কানেকশনের সেতু।&quot;</em
+        >
+      </li>
+      <li>
+        <strong
+          ><code>Ctrl+P</code> → <code>ShelterController.php</code> →
+          <code>Ctrl+G</code> → <code>14</code></strong
+        >
+        →
+        <em
+          >&quot;এই এক লাইন ডাটাবেজ থেকে পড়ে — Eloquent ORM নিজে SQL
+          বানায়।&quot;</em
+        >
+      </li>
+      <li>
+        <strong
+          ><code>Ctrl+P</code> → <code>Shelter.php</code> →
+          <code>Ctrl+G</code> → <code>13</code></strong
+        >
+        →
+        <em
+          >&quot;মডেল বলে দেয় টেবিলের আইডি কোনটা, আর ১৫-২১ লাইনে কোন কলামে লেখা
+          যাবে।&quot;</em
+        >
+      </li>
+      <li>
+        <strong
+          ><code>Ctrl+P</code> → <code>08_create_shelters_table.sql</code> →
+          <code>Ctrl+G</code> → <code>19</code></strong
+        >
+        →
+        <em
+          >&quot;আর সবশেষে ডাটাবেজে ফরেন-কি — এটাই টেবিলগুলোর সম্পর্ক।&quot;</em
+        >
+      </li>
+    </ol>
+    <blockquote>
+      <p>
+        🗣️ <strong>শেষে বলুন:</strong>
+        <em
+          >&quot;স্যার, অর্থাৎ ফ্রন্টএন্ডের ১৮ লাইন থেকে ডাটাবেজের ১৯ লাইন
+          পর্যন্ত — পুরো পথ আমি দেখাতে পারি। প্রতিটি ধাপ আলাদা ফাইলে, কিন্তু নাম
+          ও টাইপের মিলের কারণে পুরো চেইন এক সুতোয় বাঁধা।&quot;</em
+        >
+      </p>
+    </blockquote>
+    <hr />
+    <h2>৬. কানেকশন নিয়ে সম্ভাব্য প্রশ্নোত্তর</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>প্রশ্ন</th>
+          <th>উত্তর (ফাইল:লাইন)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ফ্রন্টএন্ড কীভাবে জানে ব্যাকএন্ড কোথায়?</td>
+          <td>
+            <code>lib/api.ts:3</code> —
+            <code>DEFAULT_API_ORIGIN = &quot;http://localhost:8000&quot;</code>
+          </td>
+        </tr>
+        <tr>
+          <td>রিকোয়েস্টে কুকি/সেশন কীভাবে যায়?</td>
+          <td>
+            <code>api-client:87</code> —
+            <code>credentials: &quot;include&quot;</code>
+          </td>
+        </tr>
+        <tr>
+          <td>CSRF নিরাপত্তা কোথায়?</td>
+          <td>
+            <code>api-client:212-213</code> — <code>X-XSRF-TOKEN</code> হেডার
+          </td>
+        </tr>
+        <tr>
+          <td>কোন URL কোন কন্ট্রোলারে যাবে কে ঠিক করে?</td>
+          <td><code>routes/api.php:63-73</code> — রুট ডেফিনিশন</td>
+        </tr>
+        <tr>
+          <td>লারাভেল কীভাবে টেবিলের নাম জানল?</td>
+          <td>
+            মডেলের ক্লাস-নাম থেকে নিয়ম: <code>Shelter</code> →
+            <code>shelters</code> টেবিল
+          </td>
+        </tr>
+        <tr>
+          <td>আইডি কলাম <code>id</code> না হলে?</td>
+          <td>
+            <code>Shelter.php:13</code> —
+            <code>$primaryKey = &#39;shelter_id&#39;</code> বলে দেওয়া
+          </td>
+        </tr>
+        <tr>
+          <td>ব্যাকএন্ড বন্ধ থাকলে কী হয়?</td>
+          <td>
+            <code>operations-workspace.tsx:210-215</code> —
+            <code>catch</code> ব্লক <code>isOffline=true</code> করে লোকাল মক
+            ডাটা দেখায়
+          </td>
+        </tr>
+        <tr>
+          <td>ফ্রন্টএন্ড-ব্যাকএন্ড আলাদা পোর্টে চলে, সমস্যা হয় না কেন?</td>
+          <td>
+            <code>.env</code>-এ <code>FRONTEND_URLS</code> — লারাভেল CORS অনুমতি
+            দেয়
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <hr />
+    <p>
+      <strong>মনে রাখুন:</strong> প্রতিটি কানেকশনের একটি
+      <strong>সেতু-লাইন</strong> আছে — ফ্রন্টএন্ডে <code>188/590/620</code>,
+      SDK-তে <code>499/501/502</code>, রুটে <code>63/64/65</code>, কন্ট্রোলারে
+      <code>14/28/34</code>, মডেলে <code>13/15/23</code>। এই লাইনগুলো মনে রাখলে
+      স্যার যেখানেই আঙুল রাখুন, আপনি পুরো পথ দেখাতে পারবেন। 🎯
+    </p>
+  </body>
+</html>

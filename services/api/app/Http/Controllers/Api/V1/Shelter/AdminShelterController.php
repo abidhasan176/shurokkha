@@ -96,4 +96,54 @@ class AdminShelterController extends Controller
 
         return response()->json(null, 204);
     }
+
+    /**
+     * STORED PROCEDURE: Update a shelter's occupancy via `sp_update_shelter_occupancy`.
+     *
+     * The procedure enforces the capacity rule atomically inside MySQL:
+     *   - occupancy >= capacity  → status set to 'full'
+     *   - occupancy <  capacity  → status set to 'open'
+     *
+     * This keeps business-logic out of the PHP layer and in the database,
+     * consistent with the raw-SQL philosophy used throughout this service.
+     *
+     * Route: PATCH /api/v1/admin/shelters/{shelter}/occupancy
+     */
+    public function updateOccupancy(Request $request, int|string $shelter): JsonResponse
+    {
+        $shelterId = is_numeric($shelter) ? (int) $shelter : 0;
+
+        $validated = $request->validate([
+            'occupancy' => 'required|integer|min:0',
+        ]);
+
+        // Invoke stored procedure — status ('full'/'open') is set inside MySQL.
+        DB::statement('CALL sp_update_shelter_occupancy(?, ?)', [
+            $shelterId,
+            (int) $validated['occupancy'],
+        ]);
+
+        // Return the updated record so the caller doesn't need a second request.
+        $updatedShelter = DB::selectOne(<<<'SQL'
+            SELECT
+                s.shelter_id,
+                s.shelter_name,
+                s.capacity,
+                s.occupancy,
+                (s.capacity - s.occupancy) AS available_capacity,
+                s.status,
+                s.area_id,
+                aa.severity AS area_severity,
+                s.updated_at
+            FROM shelters s
+            LEFT JOIN affected_areas aa ON s.area_id = aa.area_id
+            WHERE s.shelter_id = ?
+        SQL, [$shelterId]);
+
+        if (! $updatedShelter) {
+            return response()->json(['message' => 'Shelter not found.'], 404);
+        }
+
+        return response()->json(['data' => $updatedShelter]);
+    }
 }
