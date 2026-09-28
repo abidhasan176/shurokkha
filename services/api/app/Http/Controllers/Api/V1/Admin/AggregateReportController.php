@@ -135,4 +135,34 @@ class AggregateReportController extends Controller
 
         return response()->json(['data' => $data]);
     }
+
+    /**
+     * VIEW Query: Fetch the non-sensitive shelter capacity dashboard report from
+     * the pre-computed database VIEW `view_shelter_public_summary`.
+     *
+     * The view already joins shelters → affected_areas and computes occupancy_percentage
+     * and available_capacity, so no raw join logic is needed here.
+     * Results are ordered ascending by available capacity so the most critical
+     * (fullest) shelters surface first.
+     */
+    public function shelterPublicSummary(): JsonResponse
+    {
+        $data = DB::select(<<<'SQL'
+            SELECT
+                shelter_id,
+                shelter_name,
+                capacity,
+                occupancy,
+                available_capacity,
+                occupancy_percentage,
+                shelter_status,
+                area_id,
+                area_severity,
+                created_at
+            FROM view_shelter_public_summary
+            ORDER BY available_capacity ASC
+        SQL);
+
+        return response()->json(['data' => $data]);
+    }
 }

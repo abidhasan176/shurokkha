@@ -155,10 +155,16 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::get('/shelters', [AdminShelterController::class, 'index'])->name('shelters.index');
             Route::post('/shelters', [AdminShelterController::class, 'store'])->name('shelters.store');
             Route::delete('/shelters/{shelter}', [AdminShelterController::class, 'destroy'])->name('shelters.destroy');
+            // Stored Procedure: update occupancy + auto-derive status via sp_update_shelter_occupancy
+            Route::patch('/shelters/{shelter}/occupancy', [AdminShelterController::class, 'updateOccupancy'])
+                ->whereNumber('shelter')->name('shelters.occupancy.update');
 
             Route::get('/warehouses', [AdminWarehouseController::class, 'index'])->name('warehouses.index');
             Route::post('/warehouses', [AdminWarehouseController::class, 'store'])->name('warehouses.store');
             Route::delete('/warehouses/{warehouse}', [AdminWarehouseController::class, 'destroy'])->name('warehouses.destroy');
+            // Transaction: atomically deduct stock + create relief distribution record
+            Route::post('/warehouses/{warehouse}/distribute', [AdminWarehouseController::class, 'distributeRelief'])
+                ->whereNumber('warehouse')->name('warehouses.distribute');
 
             Route::get('/donations', [AdminDonationController::class, 'index'])->name('donations.index');
             Route::post('/donations', [AdminDonationController::class, 'store'])->name('donations.store');
@@ -170,11 +176,15 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
                 Route::get('/area-severity', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'areaSeverityBreakdown'])->name('area-severity');
                 Route::get('/active-teams', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'activeRescueTeamAssignments'])->name('active-teams');
                 Route::get('/citizen-stats', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'citizenRequestStats'])->name('citizen-stats');
+                // View: secure shelter capacity dashboard report via view_shelter_public_summary
+                Route::get('/shelter-summary-view', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'shelterPublicSummary'])->name('shelter-summary-view');
 
                 Route::get('/inner-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'innerJoin'])->name('inner-join');
                 Route::get('/left-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'leftJoin'])->name('left-join');
                 Route::get('/right-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'rightJoin'])->name('right-join');
                 Route::get('/full-outer-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'fullOuterJoin'])->name('full-outer-join');
+                // Union: combined shelters + warehouses facilities list
+                Route::get('/facility-locations', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'facilityLocations'])->name('facility-locations');
             });
         });
     });

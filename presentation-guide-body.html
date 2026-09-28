@@ -1,0 +1,590 @@
+<h1>🎯 Shurokkha — Shelters, Warehouses, Donations প্রেজেন্টেশন গাইড</h1>
+<blockquote>
+<p>এই গাইডটি আপনার কালকের ডিফেন্সের জন্য। স্যার যেকোনো লাইন, যেকোনো প্রশ্ন করুক — উত্তর এখানে রেডি আছে।
+<strong>নিয়ম:</strong> টেকনিক্যাল টার্ম, SQL কিওয়ার্ড, ফাংশনের নাম ইংরেজিতে; বাকি সব সহজ বাংলায়।</p>
+</blockquote>
+<hr>
+<h2>📋 সূচিপত্র</h2>
+<ol>
+<li><a href="#%E0%A7%A7-%E0%A6%8F%E0%A6%95-%E0%A6%A8%E0%A6%9C%E0%A6%B0%E0%A7%87-%E0%A6%B8%E0%A6%AC%E0%A6%95%E0%A6%BF%E0%A6%9B%E0%A7%81">এক নজরে সবকিছু (কুইক ম্যাপ)</a></li>
+<li><a href="#%E0%A7%A8-%E0%A6%B0%E2%80%8D%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%A1%E0%A6%AE-%E0%A6%95%E0%A7%8B%E0%A6%A1-%E0%A6%B2%E0%A6%BE%E0%A6%87%E0%A6%A8-%E0%A6%AC%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%96%E0%A7%8D%E0%A6%AF%E0%A6%BE">র‍্যান্ডম কোড লাইন ব্যাখ্যা — Controller, Model, Frontend</a></li>
+<li><a href="#%E0%A7%A9-%E0%A6%A1%E0%A6%BE%E0%A6%9F%E0%A6%BE%E0%A6%AC%E0%A7%87%E0%A6%9C-join-%E0%A6%93-%E0%A6%B2%E0%A6%9C%E0%A6%BF%E0%A6%95">ডাটাবেজ JOIN ও লজিক (ট্র্যাপ এলাকা)</a></li>
+<li><a href="#%E0%A7%AA-%E0%A6%95%E0%A6%B2%E0%A6%BE%E0%A6%AE-%E0%A6%97%E0%A6%BE%E0%A6%B0%E0%A6%AC%E0%A7%87%E0%A6%9C-%E0%A6%A1%E0%A6%BE%E0%A6%9F%E0%A6%BE-%E0%A6%93-%E0%A6%85%E0%A6%AE%E0%A6%BF%E0%A6%B2">কলাম, গারবেজ ডাটা ও অমিল (Discrepancy)</a></li>
+<li><a href="#%E0%A7%AB-%E0%A6%B0%E2%80%8D%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%AA%E0%A6%BF%E0%A6%A1-%E0%A6%AB%E0%A6%BE%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%B0-%E0%A6%AA%E0%A7%8D%E0%A6%B0%E0%A6%B6%E0%A7%8D%E0%A6%A8%E0%A7%8B%E0%A6%A4%E0%A7%8D%E0%A6%A4%E0%A6%B0">র‍্যাপিড-ফায়ার প্রশ্নোত্তর</a></li>
+<li><a href="#%E0%A7%AC-%E0%A6%B0%E0%A7%87%E0%A6%AB%E0%A6%BE%E0%A6%B0%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%B8-%E0%A6%9F%E0%A7%87%E0%A6%AC%E0%A6%BF%E0%A6%B2">সব টেবিল ও কলামের রেফারেন্স টেবিল</a></li>
+</ol>
+<hr>
+<h2>১. এক নজরে সবকিছু</h2>
+<p>আপনি তিনটি মডিউল বানিয়েছেন। প্রতিটির তিনটি স্তর (3-tier):</p>
+<table>
+<thead>
+<tr>
+<th>স্তর</th>
+<th>কাজ</th>
+<th>ফাইলের ধরন</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ডাটাবেজ</strong></td>
+<td>ডাটা সংরক্ষণের নিয়ম</td>
+<td><code>database/migrations/08,09,10</code></td>
+</tr>
+<tr>
+<td><strong>ব্যাকএন্ড (Laravel)</strong></td>
+<td>ডাটা আনা/পাঠানো/মুছা</td>
+<td><code>Controller</code> + <code>Model</code> + <code>routes/api.php</code></td>
+</tr>
+<tr>
+<td><strong>ফ্রন্টএন্ড (React/Next.js)</strong></td>
+<td>ইউজারকে দেখানো ও ফর্ম</td>
+<td><code>operations-workspace.tsx</code></td>
+</tr>
+</tbody></table>
+<p><strong>তিনটি মডিউল:</strong></p>
+<table>
+<thead>
+<tr>
+<th>মডিউল</th>
+<th>টেবিল</th>
+<th>কী ধারণ করে</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>🏠 Shelter</td>
+<td><code>shelters</code></td>
+<td>আশ্রয়কেন্দ্র (নাম, ধারণক্ষমতা, কতজন আছে)</td>
+</tr>
+<tr>
+<td>📦 Warehouse</td>
+<td><code>warehouses</code></td>
+<td>ত্রাণ গুদাম (নাম, লোকেশন, ম্যানেজার)</td>
+</tr>
+<tr>
+<td>🤝 Donation</td>
+<td><code>donations</code></td>
+<td>দান (কী দান হলো, পরিমাণ, স্ট্যাটাস)</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>🗣️ <strong>এক লাইনে বলুন:</strong> <em>&quot;স্যার, আমি ত্রাণ ব্যবস্থাপনার তিনটি অংশ — আশ্রয়কেন্দ্র, গুদাম ও দান — পুরো স্ট্যাকে (ডাটাবেজ থেকে শুরু করে ইউজার ইন্টারফেস পর্যন্ত) তৈরি করেছি।&quot;</em></p>
+</blockquote>
+<hr>
+<h2>২. র‍্যান্ডম কোড লাইন ব্যাখ্যা</h2>
+<blockquote>
+<p>স্যার যেকোনো লাইনে আঙুল রাখতে পারেন। নিচে প্রতিটি ধরনের লাইনের &quot;মানে কী&quot; দেওয়া আছে।</p>
+</blockquote>
+<h3>২.১ — Controller ফাইল (যেমন <code>ShelterController.php</code>)</h3>
+<p>তিনটি কন্ট্রোলারই (Shelter, Warehouse, Donation) <strong>একই প্যাটার্ন</strong> মানে। একটা বুঝলে তিনটাই বোঝা।</p>
+<pre><code class="language-php">&lt;?php                                              // লাইন ১: এটা একটি PHP ফাইল
+namespace App\Http\Controllers\Api\V1\Admin;       // ফাইলটি কোন &quot;ফোল্ডার-পরিচয়ে&quot; আছে
+use App\Http\Controllers\Controller;               // মূল কন্ট্রোলার ক্লাস যুক্ত করা
+use App\Models\Shelter;                            // Shelter মডেল ব্যবহার হবে
+use Illuminate\Http\JsonResponse;                  // রেসপন্স হবে JSON আকারে
+use Illuminate\Http\Request;                       // HTTP রিকোয়েস্ট ধরার জন্য
+</code></pre>
+<pre><code class="language-php">class ShelterController extends Controller         // ক্লাস শুরু, মূল কন্ট্রোলারের গুণ পায়
+{
+    public function index(): JsonResponse          // GET রিকোয়েস্ট: সব শেল্টার দেখাও
+    {
+        $shelters = Shelter::latest()-&gt;get();      // সব শেল্টার, নতুন আগে
+        return response()-&gt;json([&#39;data&#39; =&gt; $shelters]);  // JSON আকারে ফেরত দাও
+    }
+</code></pre>
+<p><strong>লাইন-ধরে স্যারকে বোঝানোর শব্দ:</strong></p>
+<ul>
+<li><code>index()</code> → <em>&quot;এটি লিস্ট মেথড, সব রেকর্ড পড়ে এনে ফ্রন্টএন্ডে পাঠায়।&quot;</em></li>
+<li><code>Shelter::latest()</code> → <em>&quot;Eloquent দিয়ে সব শেল্টার আনছি, সর্বশেষ যুক্তটা আগে আসবে।&quot;</em></li>
+<li><code>-&gt;get()</code> → <em>&quot;ক্যোয়ারি চালিয়ে ফলাফল সংগ্রহ করছি।&quot;</em></li>
+<li><code>response()-&gt;json(...)</code> → <em>&quot;ডাটাটা JSON ফরম্যাটে রেসপন্স হিসেবে পাঠাচ্ছি, যা ফ্রন্টএন্ড বুঝতে পারে।&quot;</em></li>
+</ul>
+<pre><code class="language-php">    public function store(Request $request): JsonResponse   // POST: নতুন শেল্টার বানাও
+    {
+        $validated = $request-&gt;validate([                   // ইনপুট যাচাই করা হচ্ছে
+            &#39;shelter_name&#39; =&gt; &#39;required|string|max:150&#39;,    // নাম আবশ্যক, টেক্সট, সর্বোচ্চ ১৫০ অক্ষর
+            &#39;capacity&#39; =&gt; &#39;required|integer|min:0&#39;,         // ধারণক্ষমতা আবশ্যক, পূর্ণসংখ্যা, ০+
+            &#39;occupancy&#39; =&gt; &#39;required|integer|min:0&#39;,        // কতজন আছে, ০+
+            &#39;area_id&#39; =&gt; &#39;nullable|integer&#39;,                // এরিয়া ঐচ্ছিক (খালি রাখা যায়)
+            &#39;status&#39; =&gt; &#39;sometimes|string|max:50&#39;,          // স্ট্যাটাস থাকলে যাচাই হবে
+        ]);
+
+        $shelter = Shelter::create($validated);             // যাচাই-পাস ডাটা দিয়ে রেকর্ড বানাও
+        return response()-&gt;json([&#39;data&#39; =&gt; $shelter], 201); // 201 = সফলভাবে তৈরি হয়েছে
+    }
+</code></pre>
+<p><strong>ট্র্যাপ প্রশ্ন ও উত্তর:</strong></p>
+<ul>
+<li><em>&quot;এক লাইনে <code>required|integer|min:0</code> কী?&quot;</em>
+→ <em>&quot;এগুলো ভ্যালিডেশন রুল, পাইপ (<code>|</code>) দিয়ে আলাদা। <code>required</code> মানে খালি রাখা যাবে না, <code>integer</code> মানে পূর্ণসংখ্যা, <code>min:0</code> মানে ঋণাত্মক চলবে না।&quot;</em></li>
+<li><em>&quot;<code>201</code> আর <code>200</code>-এর তফাত?&quot;</em>
+→ <em>&quot;<code>200</code> মানে ঠিক আছে, <code>201</code> মানে &#39;নতুন কিছু তৈরি হয়েছে&#39;। নতুন রেকর্ড বানালে <code>201</code> দেওয়া ভালো প্র্যাকটিস।&quot;</em></li>
+<li><em>&quot;<code>nullable</code> কেন দিলে <code>area_id</code>-এ?&quot;</em>
+→ <em>&quot;কারণ সব শেল্টার শুরুতে কোনো নির্দিষ্ট এলাকার আন্ডারে নাও থাকতে পারে। ডাটাবেজেও আমরা <code>area_id NULL</code> রেখেছি।&quot;</em></li>
+</ul>
+<pre><code class="language-php">    public function destroy(Shelter $shelter): JsonResponse  // DELETE: শেল্টার মুছো
+    {
+        $shelter-&gt;delete();                                  // রেকর্ড মুছে ফেলো
+        return response()-&gt;json(null, 204);                 // 204 = মুছে ফেলা হয়েছে, কিছু ফেরত নেই
+    }
+</code></pre>
+<ul>
+<li><em>&quot;প্যারামিটারে <code>Shelter $shelter</code> কীভাবে এলো?&quot;</em>
+→ <em>&quot;এটা <strong>Route Model Binding</strong>। URL-এর আইডি দেখে লারাভেল নিজেই ডাটাবেজ থেকে ওই শেল্টার খুঁজে এনে দেয়। আমাকে নিজে ক্যোয়ারি লিখতে হয় না।&quot;</em></li>
+</ul>
+<blockquote>
+<p>🗣️ <strong>কীভাবে উত্তর দেবেন:</strong> লাইন দেখালে প্রথমে বলুন এটা কোন মেথড (পড়তে <code>index</code>, বানাতে <code>store</code>, মুছতে <code>destroy</code>), তারপর ওই লাইনের কাজ এক বাক্যে বলুন।</p>
+</blockquote>
+<hr>
+<h3>২.২ — Model ফাইল (যেমন <code>Shelter.php</code>)</h3>
+<pre><code class="language-php">class Shelter extends Model                  // এটি একটি টেবিলের প্রতিনিধি ক্লাস
+{
+    use HasFactory;                          // টেস্ট ডাটা বানানোর সুবিধা
+
+    protected $primaryKey = &#39;shelter_id&#39;;    // এই টেবিলের আইডি-কলাম কোনটা
+
+    protected $fillable = [                  // কোন কোন কলামে ডাটা লেখা যাবে
+        &#39;area_id&#39;, &#39;shelter_name&#39;, &#39;capacity&#39;, &#39;occupancy&#39;, &#39;status&#39;,
+    ];
+
+    public function affectedArea(): BelongsTo        // সম্পর্ক: শেল্টার একটি এরিয়ার
+    {
+        return $this-&gt;belongsTo(AffectedArea::class, &#39;area_id&#39;, &#39;area_id&#39;);
+    }
+}
+</code></pre>
+<p><strong>ট্র্যাপ প্রশ্ন ও উত্তর:</strong></p>
+<ul>
+<li><em>&quot;<code>$fillable</code> কেন দরকার?&quot;</em>
+→ <em>&quot;নিরাপত্তার জন্য। লারাভেল শুধু <code>$fillable</code>-এ থাকা কলামগুলোতেই ডাটা লিখবে। এতে কেউ চাইলেই অন্য কোনো কলামে (যেমন আইডি) জোর করে ডাটা ঢোকাতে পারবে না। একে বলে <strong>Mass Assignment Protection</strong>।&quot;</em></li>
+<li><em>&quot;<code>$primaryKey</code> কেন লিখতে হলো?&quot;</em>
+→ <em>&quot;লারাভেল ডিফল্টে আইডি-কলামকে <code>id</code> ধরে নেয়। আমাদের টেবিলে নাম <code>shelter_id</code>, তাই জানিয়ে দিলাম।&quot;</em></li>
+<li><em>&quot;<code>belongsTo</code> মানে কী?&quot;</em>
+→ <em>&quot;একটি শেল্টার একটি নির্দিষ্ট এলাকার অন্তর্গত। অর্থাৎ শেল্টার টেবিলে <code>area_id</code> ফরেন-কি আছে যা <code>affected_areas</code> টেবিলকে নির্দেশ করে।&quot;</em></li>
+<li><em>&quot;<code>belongsTo</code>-এর তিনটি আর্গুমেন্ট কী?&quot;</em>
+→ <em>&quot;১) কোন মডেলের সাথে সম্পর্ক (<code>AffectedArea</code>), ২) এই টেবিলের ফরেন-কি (<code>area_id</code>), ৩) ওই টেবিলের প্রাইমারি কি (<code>area_id</code>)।&quot;</em></li>
+</ul>
+<blockquote>
+<p>🗣️ <strong>মনে রাখুন:</strong> মডেল = টেবিলের মানচিত্র। এটি বলে দেয় টেবিলের নাম, আইডি কোনটা, কোন কলামে লেখা যাবে, আর অন্য টেবিলের সাথে সম্পর্ক কী।</p>
+</blockquote>
+<hr>
+<h3>২.৩ — ফ্রন্টএন্ড ফাইল (<code>operations-workspace.tsx</code>)</h3>
+<p>এটি সবচেয়ে বড় ফাইল। স্যার এখান থেকে যেকোনো অংশ দেখাতে পারেন।</p>
+<h4>(ক) ফর্ম সাবমিট হ্যান্ডলার — <code>handleAddShelter</code></h4>
+<pre><code class="language-ts">const handleAddShelter = async (e: React.FormEvent) =&gt; {
+  e.preventDefault();                       // পেজ রিফ্রেশ আটকাই
+  if (!shelterForm.shelter_name || !shelterForm.capacity) {
+    toast.error(&quot;Please fill out shelter name and capacity.&quot;);  // ফাঁকা হলে সতর্কতা
+    return;                                  // এখানেই থামি, পাঠাই না
+  }
+
+  const payload = {                          // কোন কোন ডাটা পাঠাব
+    shelter_name: shelterForm.shelter_name,
+    area_id: Number(shelterForm.area_id),
+    capacity: Number(shelterForm.capacity),
+    occupancy: Number(shelterForm.occupancy || 0),
+    status: shelterForm.status,
+  };
+
+  if (!isOffline) {                          // ব্যাকএন্ড চালু থাকলে
+    try {
+      const res = await api.admin.shelters.create(payload);  // POST পাঠাই
+      setShelters([res.data, ...shelters]);  // নতুনটা তালিকার সামনে বসাই
+      toast.success(`Shelter saved to backend (ID: ${res.data.shelter_id})`);
+    } catch (err) {
+      toast.error(&quot;Failed to save shelter to backend.&quot;);      // ব্যর্থ হলে বার্তা
+    }
+  } else {                                   // ব্যাকএন্ড বন্ধ থাকলে (অফলাইন)
+    // লোকালভাবে একটি আইডি বানিয়ে তালিকায় যোগ করি
+  }
+
+  setShelterForm({ ... });                  // ফর্ম আবার খালি করে দিই
+};
+</code></pre>
+<p><strong>ট্র্যাপ প্রশ্ন ও উত্তর:</strong></p>
+<ul>
+<li><em>&quot;<code>e.preventDefault()</code> কেন?&quot;</em>
+→ <em>&quot;ফর্ম সাবমিট করলে ব্রাউজার ডিফল্টে পেজ রিলোড করে। এটা আটকাই, যাতে ডাটা আগে পাঠাতে পারি।&quot;</em></li>
+<li><em>&quot;<code>Number(...)</code> কেন দিলে?&quot;</em>
+→ <em>&quot;ফর্মের ইনপুট ডিফল্টে স্ট্রিং হয়। ডাটাবেজে পাঠানোর আগে সেটাকে সংখ্যায় বদলাই, নাহলে টাইপ-ভুল হবে।&quot;</em></li>
+<li><em>&quot;<code>await</code> কী?&quot;</em>
+→ <em>&quot;এটি একটি অ্যাসিনক্রোনাস অপারেশন। <code>await</code> দিয়ে অপেক্ষা করি যতক্ষণ না ব্যাকএন্ড থেকে উত্তর আসে।&quot;</em></li>
+<li><em>&quot;অফলাইন মোড কেন রেখেছ?&quot;</em>
+→ <em>&quot;যাতে ব্যাকএন্ড বন্ধ থাকলেও ইউজার ইন্টারফেস কাজ করে দেখানো যায়। এটি একটি ফলব্যাক (fallback) ব্যবস্থা।&quot;</em></li>
+<li><em>&quot;<code>[res.data, ...shelters]</code> কী করছে?&quot;</em>
+→ <em>&quot;নতুন শেল্টারকে তালিকার শুরুতে বসাচ্ছি, বাকিগুলো পেছনে রাখছি। <code>...</code> হলো স্প্রেড অপারেটর।&quot;</em></li>
+</ul>
+<h4>(খ) টেবিলে ডাটা দেখানো (<code>.map()</code> অংশ)</h4>
+<pre><code class="language-tsx">{shelters.map((s) =&gt; (                       // প্রতিটি শেল্টারের জন্য একটি সারি
+  &lt;tr key={s.shelter_id}&gt;                    // ইউনিক আইডি দিলাম (রিঅ্যাক্টের নিয়ম)
+    &lt;td&gt;#{s.shelter_id}&lt;/td&gt;
+    &lt;td&gt;{s.shelter_name}&lt;/td&gt;
+    &lt;td&gt;{s.capacity}&lt;/td&gt;
+    ...
+  &lt;/tr&gt;
+))}
+</code></pre>
+<ul>
+<li><em>&quot;<code>key={s.shelter_id}</code> কেন?&quot;</em>
+→ <em>&quot;রিঅ্যাক্ট প্রতিটি সারিকে আলাদা করে চেনার জন্য একটি ইউনিক আইডি চায়। না দিলে ডাটা বদলালে ভুল জায়গায় আপডেট হতে পারে।&quot;</em></li>
+</ul>
+<blockquote>
+<p>🗣️ <strong>কীভাবে উত্তর দেবেন:</strong> ফ্রন্টএন্ডে লাইন দেখালে বলুন — এটা কি (১) ফর্ম যাচাই, (২) ডাটা পাঠানো, (৩) ডাটা দেখানো, নাকি (৪) ফর্ম রিসেট। তারপর এক বাক্যে কাজ বলুন।</p>
+</blockquote>
+<hr>
+<h2>৩. ডাটাবেজ JOIN ও লজিক</h2>
+<blockquote>
+<p>⚠️ এটিই সবচেয়ে বেশি প্রশ্ন আসা এলাকা। ভালো করে পড়ুন।</p>
+</blockquote>
+<h3>৩.১ — মূল রিপোর্ট ক্যোয়ারি (<code>admin_shelter_capacity_report.sql</code>)</h3>
+<pre><code class="language-sql">SELECT
+    aa.area_id,
+    aa.severity AS area_severity,
+    aa.affected_population,
+    COUNT(s.shelter_id)                        AS total_shelters,
+    COALESCE(SUM(s.capacity), 0)               AS total_capacity,
+    COALESCE(SUM(s.capacity - s.occupancy), 0) AS total_capacity_available
+FROM affected_areas aa
+LEFT JOIN shelters s ON s.area_id = aa.area_id
+GROUP BY aa.area_id, aa.severity, aa.affected_population
+ORDER BY total_capacity_available DESC;
+</code></pre>
+<h3>৩.২ — কোন কোন টেবিল জয়েন হলো এবং কেন?</h3>
+<table>
+<thead>
+<tr>
+<th>টেবিল</th>
+<th>ভূমিকা</th>
+<th>জয়েনের কারণ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>affected_areas</code> (aa)</td>
+<td>মূল টেবিল</td>
+<td>প্রতিটি এলাকার তথ্য দেখাতে হবে</td>
+</tr>
+<tr>
+<td><code>shelters</code> (s)</td>
+<td>যুক্ত টেবিল</td>
+<td>ওই এলাকায় কয়টি শেল্টার ও তাদের ধারণক্ষমতা দেখাতে</td>
+</tr>
+</tbody></table>
+<p><strong>জয়েনের শর্ত:</strong> <code>ON s.area_id = aa.area_id</code>
+→ শেল্টার টেবিলের <code>area_id</code> আর এলাকা টেবিলের <code>area_id</code> মিলিয়ে দেখা হচ্ছে। অর্থাৎ কোন শেল্টার কোন এলাকার।</p>
+<blockquote>
+<p>🗣️ <strong>এক বাক্যে:</strong> <em>&quot;স্যার, <code>affected_areas</code>-এর সাথে <code>shelters</code> জয়েন করেছি <code>area_id</code> দিয়ে, যাতে প্রতিটি এলাকার জন্য সেখানকার শেল্টারগুলোর মোট ধারণক্ষমতা বের করতে পারি।&quot;</em></p>
+</blockquote>
+<h3>৩.৩ — <code>LEFT JOIN</code> কেন? <code>INNER JOIN</code> কেন নয়?</h3>
+<p>এটি সবচেয়ে সম্ভাব্য ট্র্যাপ প্রশ্ন।</p>
+<ul>
+<li><strong><code>LEFT JOIN</code></strong> → বাম টেবিলের (এলাকা) <strong>সব</strong> রেকর্ড আসবে, এমনকি যদি তার কোনো শেল্টার না-ও থাকে। তখন শেল্টার-কলামগুলো <code>NULL</code> হবে।</li>
+<li><strong><code>INNER JOIN</code></strong> → শুধু সেই এলাকাগুলো আসবে যাদের <strong>অন্তত একটি</strong> শেল্টার আছে। যেসব এলাকায় শেল্টার নেই, তারা হারিয়ে যাবে।</li>
+</ul>
+<p><strong>আমরা <code>LEFT JOIN</code> বেছে নিয়েছি কারণ:</strong>
+ত্রাণ ব্যবস্থাপনায় জানা জরুরি <strong>কোন এলাকায় এখনো কোনো শেল্টারই নেই</strong> — সেখানে জরুরি ব্যবস্থা নিতে হবে। <code>INNER JOIN</code> দিলে এই গুরুত্বপূর্ণ তথ্য লুকিয়ে যেত।</p>
+<blockquote>
+<p>🗣️ <strong>উত্তর:</strong> <em>&quot;<code>LEFT JOIN</code> দিয়েছি যাতে শেল্টার-বিহীন এলাকাগুলোও রিপোর্টে দেখা যায় এবং তাদের ধারণক্ষমতা <code>0</code> দেখায়। এতে প্রশাসন বুঝতে পারে কোথায় শেল্টার বসাতে হবে।&quot;</em></p>
+</blockquote>
+<h3>৩.৪ — এখানে কি কোনো Triple JOIN আছে?</h3>
+<p><strong>সরাসরি উত্তর: না।</strong> এই রিপোর্টে মাত্র <strong>দুইটি</strong> টেবিল জয়েন হয়েছে (<code>affected_areas</code> + <code>shelters</code>)। এটি একটি <strong>দ্বি-টেবিল (2-table) জয়েন</strong>।</p>
+<p>তবে আপনি চাইলে <strong>ট্রিপল জয়েন সম্ভব</strong> দেখাতে পারেন, কারণ <code>affected_areas</code> টেবিলে <code>disaster_id</code> ফরেন-কি আছে:</p>
+<pre><code class="language-sql">-- উদাহরণ: তিনটি টেবিল জয়েন (শেল্টার ← এলাকা ← দুর্যোগ)
+SELECT aa.area_id, d.disaster_name, COUNT(s.shelter_id) AS shelter_count
+FROM affected_areas aa
+INNER JOIN disasters d ON d.disaster_id = aa.disaster_id
+LEFT JOIN shelters s  ON s.area_id = aa.area_id
+GROUP BY aa.area_id, d.disaster_name;
+</code></pre>
+<blockquote>
+<p>🗣️ <strong>কী বলবেন:</strong> <em>&quot;স্যার, আমার মূল রিপোর্টে দুইটি টেবিলের জয়েন আছে। তবে <code>affected_areas</code>-এর সাথে <code>disasters</code>-ও যুক্ত থাকায় চাইলে তিনটি টেবিলের জয়েনও করা সম্ভব — যেটা এলাকা এবং সংশ্লিষ্ট দুর্যোগ দুটোর তথ্যই দেখাবে।&quot;</em></p>
+</blockquote>
+<h3>৩.৫ — <code>WHERE</code> ক্লজ কোথায় ও কেন?</h3>
+<p>দুটি ভিন্ন ক্যোয়ারিতে <code>WHERE</code> দুইভাবে ব্যবহৃত:</p>
+<p><strong>(ক) সাবক্যোয়ারিতে <code>WHERE</code> (Critical এলাকার শেল্টার):</strong></p>
+<pre><code class="language-sql">SELECT shelter_name, capacity FROM shelters
+WHERE area_id IN (SELECT area_id FROM affected_areas WHERE severity = &#39;Critical&#39;)
+ORDER BY capacity DESC;
+</code></pre>
+<ul>
+<li>এখানে <code>WHERE</code> <strong>ফিল্টার</strong> করছে: শুধু সেই শেল্টার দেখাও যাদের এলাকা <code>Critical</code>।</li>
+<li>ভেতরের <code>SELECT</code> আগে চলে <code>Critical</code> এলাকাগুলোর আইডি বের করে, তারপর বাইরের <code>WHERE ... IN</code> সেই আইডিগুলোর শেল্টার দেখায়।</li>
+</ul>
+<p><strong>(খ) মূল রিপোর্টে <code>WHERE</code> নেই — কিন্তু আছে <code>GROUP BY</code> ও <code>ORDER BY</code>:</strong></p>
+<ul>
+<li>মূল রিপোর্টে আমরা কোনো সারি বাদ দিচ্ছি না (সব এলাকা দরকার), তাই <code>WHERE</code> নেই।</li>
+<li>বরং <code>GROUP BY</code> দিয়ে প্রতিটি এলাকার জন্য আলাদা হিসাব করছি।</li>
+</ul>
+<p><strong>গুরুত্বপূর্ণ পার্থক্য — <code>WHERE</code> বনাম <code>HAVING</code>:</strong></p>
+<ul>
+<li><code>WHERE</code> → জয়েনের <strong>পরে, কিন্তু আগ্রিগেশনের আগে</strong> সারি ফিল্টার করে।</li>
+<li><code>HAVING</code> → <code>GROUP BY</code> ও আগ্রিগেশনের <strong>পরে</strong> ফিল্টার করে।</li>
+<li>যেমন: <em>&quot;যে এলাকায় শেল্টার-সংখ্যা ২-এর বেশি&quot;</em> দেখাতে চাইলে <code>HAVING COUNT(s.shelter_id) &gt; 2</code> লাগবে, <code>WHERE</code> দিয়ে এটা করা যায় না।</li>
+</ul>
+<blockquote>
+<p>🗣️ <strong>উত্তর:</strong> <em>&quot;<code>WHERE</code> ব্যবহার করি সারি ফিল্টার করতে, আর জয়েনের শর্ত <code>ON</code> দিয়ে টেবিল মেলাই। মূল রিপোর্টে কোনো সারি বাদ দেওয়ার দরকার নেই বলে <code>WHERE</code> নেই — সব এলাকা দেখাতে চাই।&quot;</em></p>
+</blockquote>
+<h3>৩.৬ — অ্যাগ্রিগেট ফাংশনগুলোর কাজ</h3>
+<table>
+<thead>
+<tr>
+<th>ফাংশন</th>
+<th>কী করে</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>COUNT(s.shelter_id)</code></td>
+<td>ওই এলাকায় কয়টি শেল্টার (ফাঁকা/<code>NULL</code> গোনে না)</td>
+</tr>
+<tr>
+<td><code>SUM(s.capacity)</code></td>
+<td>সব শেল্টারের মোট ধারণক্ষমতা</td>
+</tr>
+<tr>
+<td><code>SUM(s.capacity - s.occupancy)</code></td>
+<td>মোট <strong>খালি জায়গা</strong> (ধারণক্ষমতা − যারা এখন আছে)</td>
+</tr>
+<tr>
+<td><code>COALESCE(x, 0)</code></td>
+<td>যদি ফল <code>NULL</code> হয়, তবে <code>0</code> দেখাও</td>
+</tr>
+<tr>
+<td><code>GROUP BY aa.area_id</code></td>
+<td>প্রতিটি এলাকার জন্য আলাদা হিসাব করো</td>
+</tr>
+</tbody></table>
+<p><strong><code>COALESCE</code> কেন দরকার?</strong>
+যে এলাকায় কোনো শেল্টার নেই, সেখানে <code>SUM</code> ফলাফল <code>NULL</code> হয়। <code>COALESCE(..., 0)</code> সেটাকে <code>0</code>-এ বদলায়, যাতে রিপোর্টে <code>0</code> দেখায়, ফাঁকা বা <code>NULL</code> নয়।</p>
+<blockquote>
+<p>🗣️ <strong>উত্তর:</strong> <em>&quot;<code>COALESCE</code> দিয়েছি কারণ <code>LEFT JOIN</code>-এ শেল্টার-বিহীন এলাকার যোগফল <code>NULL</code> আসে। আমি চাই ওখানে স্পষ্ট <code>0</code> দেখাক।&quot;</em></p>
+</blockquote>
+<hr>
+<h2>৪. কলাম, গারবেজ ডাটা ও অমিল</h2>
+<h3>৪.১ — জয়েনের পর অতিরিক্ত/অপ্রত্যাশিত কলাম কেন আসে?</h3>
+<p>যদি আপনি জয়েনে <code>SELECT *</code> লেখেন, তাহলে <strong>দুই টেবিলের সব কলাম</strong> চলে আসে। সমস্যা হয় তখন যখন দুই টেবিলে <strong>একই নামের কলাম</strong> থাকে:</p>
+<ul>
+<li><code>affected_areas</code>-এ আছে: <code>area_id</code>, <code>created_at</code>, <code>updated_at</code></li>
+<li><code>shelters</code>-এও আছে: <code>area_id</code>, <code>created_at</code>, <code>updated_at</code></li>
+</ul>
+<p>তাই <code>SELECT *</code> করলে <code>area_id</code> ও <code>created_at</code> <strong>দুইবার</strong> আসে — কোনটা কোন টেবিলের বোঝা যায় না। এগুলোই &quot;অতিরিক্ত/অপ্রত্যাশিত কলাম&quot;।</p>
+<p><strong>সমাধান (আমরা যা করেছি):</strong>
+<code>SELECT *</code> না লিখে শুধু দরকারি কলাম লিখেছি এবং <strong>উপনাম (alias)</strong> দিয়েছি:</p>
+<pre><code class="language-sql">aa.area_id, aa.severity AS area_severity
+</code></pre>
+<p><code>aa.</code> আর <code>s.</code> দিয়ে স্পষ্ট করেছি কোন কলাম কোন টেবিলের।</p>
+<blockquote>
+<p>🗣️ <strong>উত্তর:</strong> <em>&quot;স্যার, <code>SELECT *</code> করলে দুই টেবিলের সব কলাম আসে, আর একই নামের কলাম (যেমন <code>area_id</code>, <code>created_at</code>) ডুপ্লিকেট হয়ে যায়। তাই আমি নির্দিষ্ট কলাম লিখেছি এবং টেবিল-উপনাম দিয়ে স্পষ্ট করেছি।&quot;</em></p>
+</blockquote>
+<h3>৪.২ — গারবেজ/অপ্রত্যাশিত ডাটা কোথা থেকে আসে?</h3>
+<p>কয়েকটি উৎস:</p>
+<ol>
+<li><strong><code>NULL</code> ফরেন-কি:</strong> <code>shelters.area_id</code> ফাঁকা রাখা যায়। ফলে এমন শেল্টার থাকতে পারে যা কোনো এলাকার সাথে যুক্ত নয়। জয়েনে এরা হয়তো দেখাবে না, কিন্তু <code>NULL</code> মান হিসেবে ডাটাবেজে থাকে।</li>
+<li><strong><code>ON DELETE SET NULL</code> আচরণ:</strong> আমরা ডিজাইন করেছি — কোনো এলাকা মুছলে তার শেল্টার মুছে না গিয়ে শুধু <code>area_id</code> ফাঁকা (<code>NULL</code>) হয়ে যায়। এটি ইচ্ছাকৃত, যাতে শেল্টারের ইতিহাস হারিয়ে না যায়।</li>
+<li><strong>ফ্রি-টেক্সট কলাম:</strong> <code>shelter_name</code>, <code>status</code>-এর মতো কলামে ইউজার যা খুশি লিখতে পারে, তাই ভুল বানান বা অসঙ্গত মান ঢুকতে পারে।</li>
+<li><strong>সীমাহীন স্ট্যাটাস:</strong> <code>status</code> একটি সাধারণ <code>VARCHAR</code>, তাই কেউ <code>open</code>/<code>Open</code>/<code>OPEN</code> লিখলে তিন রকম মান তৈরি হতে পারে।</li>
+</ol>
+<blockquote>
+<p>🗣️ <strong>উত্তর:</strong> <em>&quot;গারবেজ ডাটা মূলত আসে ফাঁকা ফরেন-কি, ইচ্ছাকৃত <code>SET NULL</code> আচরণ, আর ফ্রি-টেক্সট কলাম থেকে। আমরা ভ্যালিডেশন দিয়ে (<code>required</code>, <code>max</code>, <code>integer</code>) ইনপুট-সাইডে এটা নিয়ন্ত্রণ করি।&quot;</em></p>
+</blockquote>
+<h3>৪.৩ — অ্যাগ্রিগেট/রো-কাউন্ট কেন ডাটাবেজ ও ফ্রন্টএন্ডে আলাদা দেখায়?</h3>
+<p>এটি একটি দুর্দান্ত &quot;ফাঁদ&quot; প্রশ্ন। কারণগুলো:</p>
+<p><strong>(ক) ডাটাবেজে <code>GROUP BY</code> কিন্তু ফ্রন্টএন্ডে ফিল্টার:</strong></p>
+<ul>
+<li>ডাটাবেজ ক্যোয়ারি প্রতিটি <strong>এলাকা</strong>-ভিত্তিক হিসাব করে (<code>GROUP BY</code>)।</li>
+<li>ফ্রন্টএন্ড কিন্তু শুধু <strong>শেল্টার-তালিকা</strong> দেখায়, প্রতিটি এলাকার যোগফল নয়।</li>
+<li>তাই ডাটাবেজ রিপোর্টে দেখা &quot;মোট ৩টি শেল্টার&quot; আর ফ্রন্টএন্ডের তালিকায় &quot;১০টি শেল্টার&quot; — দুটো <strong>ভিন্ন জিনিস</strong>।</li>
+</ul>
+<p><strong>(খ) <code>LEFT JOIN</code>-এর <code>NULL</code> রো:</strong></p>
+<ul>
+<li>রিপোর্টে শেল্টার-বিহীন এলাকাও <code>0</code> নিয়ে উপস্থিত থাকে।</li>
+<li>কিন্তু শুধু <code>shelters</code> টেবিল দেখালে ওই এলাকাগুলো একেবারেই থাকে না। ফলে &quot;রো-সংখ্যা&quot; আলাদা লাগে।</li>
+</ul>
+<p><strong>(গ) <code>COUNT(shelter_id)</code> বনাম <code>COUNT(*)</code>:</strong></p>
+<ul>
+<li><code>COUNT(s.shelter_id)</code> → <code>NULL</code> আইডি <strong>গোনে না</strong>।</li>
+<li><code>COUNT(*)</code> → সব রো গোনে, <code>NULL</code> সহ।</li>
+<li>তাই শেল্টার-বিহীন এলাকায় <code>COUNT(s.shelter_id)</code> দেয় <code>0</code>, কিন্তু <code>COUNT(*)</code> দিত <code>1</code> (একটি ম্যাচিং-না-পাওয়া রো)।</li>
+</ul>
+<p><strong>(ঘ) ডাটা বদলে যাওয়া (টাইমিং):</strong></p>
+<ul>
+<li>ডাটাবেজে ক্যোয়ারি চালানোর সময় আর ফ্রন্টএন্ড ডাটা আনার সময়ের মাঝে নতুন রেকর্ড যোগ/মুছা হলে সংখ্যা বদলাবে।</li>
+</ul>
+<p><strong>(ঙ) ফ্রন্টএন্ড শুধু লোড-হওয়া ডাটা দেখায়:</strong></p>
+<ul>
+<li>ফ্রন্টএন্ড যা এপিআই থেকে পেয়েছে শুধু সেটাই দেখায়। পেজিনেশন বা ফিল্টার থাকলে পুরো ডাটাবেজের সংখ্যা দেখাবে না।</li>
+</ul>
+<blockquote>
+<p>🗣️ <strong>উত্তর:</strong> <em>&quot;স্যার, অমিলটা আসলে ভুল নয় — দুটো ভিন্ন হিসাব। ডাটাবেজ ক্যোয়ারি <code>GROUP BY</code> দিয়ে প্রতি এলাকার যোগফল বের করে, আর ফ্রন্টএন্ড শুধু শেল্টারের কাঁচা তালিকা দেখায়। তাছাড়া <code>COUNT(shelter_id)</code> ফাঁকা মান গোনে না, কিন্তু <code>COUNT(*)</code> গোনে — এই পার্থক্যই সংখ্যা আলাদা দেখায়।&quot;</em></p>
+</blockquote>
+<hr>
+<h2>৫. র‍্যাপিড-ফায়ার প্রশ্নোত্তর</h2>
+<table>
+<thead>
+<tr>
+<th>প্রশ্ন</th>
+<th>দ্রুত উত্তর</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>মডেল আর কন্ট্রোলারের তফাত?</td>
+<td>মডেল = টেবিলের মানচিত্র; কন্ট্রোলার = রিকোয়েস্ট হ্যান্ডেল করার লজিক।</td>
+</tr>
+<tr>
+<td><code>fillable</code> না দিলে কী হতো?</td>
+<td>নিরাপত্তা ঝুঁকি — যেকোনো কলামে ডাটা ঢোকানো যেত।</td>
+</tr>
+<tr>
+<td><code>LEFT JOIN</code> আর <code>INNER JOIN</code>?</td>
+<td><code>LEFT JOIN</code> বাম টেবিলের সব রাখে, <code>INNER JOIN</code> শুধু মিলে যাওয়া রাখে।</td>
+</tr>
+<tr>
+<td>সাবক্যোয়ারি কেন, জয়েন কেন নয়?</td>
+<td>উভয়েই কাজ হয়; সাবক্যোয়ারি এখানে পরিস্কার কারণ &quot;আগে আইডি বের করো, তারপর শেল্টার দেখাও&quot;।</td>
+</tr>
+<tr>
+<td><code>GROUP BY</code> না দিলে কী হতো?</td>
+<td>সব এলাকা মিলিয়ে একটিমাত্র যোগফল আসত, প্রতি-এলাকা হিসাব হতো না।</td>
+</tr>
+<tr>
+<td><code>COALESCE</code> ছাড়া কী হতো?</td>
+<td>শেল্টার-বিহীন এলাকায় যোগফল <code>0</code>-এর বদলে <code>NULL</code> দেখাত।</td>
+</tr>
+<tr>
+<td>ফ্রন্টএন্ড থেকে ডাটা কীভাবে যায়?</td>
+<td><code>fetch</code> দিয়ে <code>POST</code> রিকোয়েস্ট, <code>payload</code> JSON আকারে ব্যাকএন্ডে পাঠাই।</td>
+</tr>
+<tr>
+<td><code>201</code>, <code>204</code> কী?</td>
+<td><code>201</code> = তৈরি হয়েছে; <code>204</code> = মুছে ফেলা হয়েছে, কোনো বডি নেই।</td>
+</tr>
+<tr>
+<td>অফলাইন মোড কেন?</td>
+<td>ব্যাকএন্ড বন্ধ থাকলেও ডেমো চালানোর ফলব্যাক ব্যবস্থা।</td>
+</tr>
+<tr>
+<td>ডাটাবেজে ৩টি টেবিলই কি জয়েন হয়?</td>
+<td>মূল রিপোর্টে দুইটি; চাইলে <code>disasters</code> যোগ করে তিনটি করা যায়।</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>৬. রেফারেন্স টেবিল</h2>
+<h3>আপনার তিন টেবিল</h3>
+<table>
+<thead>
+<tr>
+<th>টেবিল</th>
+<th>কলাম</th>
+<th>টাইপ</th>
+<th>মানে</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>shelters</strong></td>
+<td><code>shelter_id</code></td>
+<td>INT (PK)</td>
+<td>শেল্টারের আইডি</td>
+</tr>
+<tr>
+<td></td>
+<td><code>area_id</code></td>
+<td>INT (FK, NULL)</td>
+<td>কোন এলাকার (ফাঁকা হতে পারে)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>shelter_name</code></td>
+<td>VARCHAR(150)</td>
+<td>শেল্টারের নাম</td>
+</tr>
+<tr>
+<td></td>
+<td><code>capacity</code></td>
+<td>INT</td>
+<td>মোট ধারণক্ষমতা</td>
+</tr>
+<tr>
+<td></td>
+<td><code>occupancy</code></td>
+<td>INT</td>
+<td>বর্তমানে কতজন আছে</td>
+</tr>
+<tr>
+<td></td>
+<td><code>status</code></td>
+<td>VARCHAR(50)</td>
+<td><code>open</code> / <code>full</code> / <code>closed</code></td>
+</tr>
+<tr>
+<td><strong>warehouses</strong></td>
+<td><code>warehouse_id</code></td>
+<td>INT (PK)</td>
+<td>গুদামের আইডি</td>
+</tr>
+<tr>
+<td></td>
+<td><code>warehouse_name</code></td>
+<td>VARCHAR(150)</td>
+<td>গুদামের নাম</td>
+</tr>
+<tr>
+<td></td>
+<td><code>location_id</code></td>
+<td>INT (NULL)</td>
+<td>লোকেশন কোড</td>
+</tr>
+<tr>
+<td></td>
+<td><code>manager_id</code></td>
+<td>INT (FK, NULL)</td>
+<td>দায়িত্বপ্রাপ্ত ব্যবহারকারী</td>
+</tr>
+<tr>
+<td><strong>donations</strong></td>
+<td><code>donation_id</code></td>
+<td>BIGINT (PK)</td>
+<td>দানের আইডি</td>
+</tr>
+<tr>
+<td></td>
+<td><code>donation_kind</code></td>
+<td>VARCHAR(50)</td>
+<td>কী ধরনের দান</td>
+</tr>
+<tr>
+<td></td>
+<td><code>amount</code></td>
+<td>DECIMAL(12,2)</td>
+<td>পরিমাণ/মূল্য</td>
+</tr>
+<tr>
+<td></td>
+<td><code>status</code></td>
+<td>VARCHAR(50)</td>
+<td><code>received</code>/<code>stored</code>/<code>distributed</code></td>
+</tr>
+</tbody></table>
+<h3>ফরেন-কি সম্পর্ক</h3>
+<table>
+<thead>
+<tr>
+<th>ফরেন-কি</th>
+<th>কোথা থেকে</th>
+<th>কোথায় যায়</th>
+<th>আচরণ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>fk_shelters_area</code></td>
+<td><code>shelters.area_id</code></td>
+<td><code>affected_areas.area_id</code></td>
+<td><code>ON DELETE SET NULL</code></td>
+</tr>
+<tr>
+<td><code>fk_warehouses_manager</code></td>
+<td><code>warehouses.manager_id</code></td>
+<td><code>users.user_id</code></td>
+<td><code>ON DELETE SET NULL</code></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>🗣️ <strong>শেষ বাক্য:</strong> <em>&quot;স্যার, আমি তিনটি মডিউল পুরো স্ট্যাকে তৈরি করেছি, ডাটাবেজে সঠিক ফরেন-কি ও ভ্যালিডেশন রেখেছি, এবং <code>LEFT JOIN</code> + <code>GROUP BY</code> + <code>COALESCE</code> দিয়ে একটি বাস্তবসম্মত ক্যাপাসিটি-রিপোর্ট বানিয়েছি যা শেল্টার-বিহীন এলাকাও চিহ্নিত করে।&quot;</em></p>
+</blockquote>
+<hr>
+<p><strong>শুভকামনা! আপনি প্রস্তুত।</strong> 🎓</p>

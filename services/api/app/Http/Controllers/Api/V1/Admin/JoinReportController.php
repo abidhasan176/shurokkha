@@ -105,4 +105,49 @@ class JoinReportController extends Controller
 
         return response()->json(['data' => $data]);
     }
+
+    /**
+     * 5. UNION: Combine Shelters and Warehouses into one unified Facilities list.
+     *
+     * Both branches must produce the same number of columns in the same order:
+     *   facility_id | facility_name | facility_type | facility_status | total_capacity | area_reference
+     *
+     * UNION ALL is used (instead of UNION DISTINCT) because a shelter and a
+     * warehouse can legitimately share the same numeric ID — de-duplication
+     * across different types would silently drop valid rows.
+     *
+     * The warehouses branch aggregates warehouse_resources so that total_capacity
+     * represents total stock units rather than a physical-bed count. NULL is
+     * substituted where the column concept doesn't apply to that facility type.
+     */
+    public function facilityLocations(): JsonResponse
+    {
+        $data = DB::select(<<<'SQL'
+            SELECT
+                s.shelter_id    AS facility_id,
+                s.shelter_name  AS facility_name,
+                'shelter'       AS facility_type,
+                s.status        AS facility_status,
+                s.capacity      AS total_capacity,
+                s.area_id       AS area_reference
+            FROM shelters s
+
+            UNION ALL
+
+            SELECT
+                w.warehouse_id                          AS facility_id,
+                w.warehouse_name                        AS facility_name,
+                'warehouse'                             AS facility_type,
+                'active'                                AS facility_status,
+                COALESCE(SUM(wr.quantity), 0)           AS total_capacity,
+                w.location_id                           AS area_reference
+            FROM warehouses w
+            LEFT JOIN warehouse_resources wr ON w.warehouse_id = wr.warehouse_id
+            GROUP BY w.warehouse_id, w.warehouse_name, w.location_id
+
+            ORDER BY facility_type ASC, facility_name ASC
+        SQL);
+
+        return response()->json(['data' => $data]);
+    }
 }
